@@ -6,8 +6,10 @@ const LocalStrategy = require('passport-local').Strategy
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const mongoDb = 'YOUR MONGO URL HERE'
-mongoose.connect(mongoDb)
+const mongoDb = 'mongodb://127.0.0.1:27017/authentication_basics'
+mongoose.connect(mongoDb).then(res => {
+    console.log('db conn');
+})
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'mongo connection error'))
 
