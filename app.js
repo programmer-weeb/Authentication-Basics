@@ -78,15 +78,19 @@ app.post('/sign-up', async (req, res, next) => {
 })
 app.get('/log-in', (req, res) => res.render('log-in'))
 app.post(
-	'log-in',
+	'/log-in',
 	passport.authenticate('local', {
-		failureRedirect: '/log-in',
-		failureMessage: true,
-	}),
-	(req, res) => {
-		console.log({ user: req.user })
-		res.send('skdlfjlskdfj')
-	}
+		successRedirect: '/',
+		failureRedirect: '/',
+	})
 )
+app.get('/log-out', (req, res, next) => {
+	req.logout((err) => {
+		if (err) {
+			return next(err)
+		}
+		res.redirect('/')
+	})
+})
 
 app.listen(3000, () => console.log('app listening on port 3000!'))
