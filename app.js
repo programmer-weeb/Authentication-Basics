@@ -5,6 +5,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const bcrypt = require('bcryptjs')
 
 const mongoDb = 'mongodb://127.0.0.1:27017/authentication_basics'
 mongoose.connect(mongoDb).then((res) => {
@@ -66,9 +67,10 @@ app.get('/', (req, res) => {
 app.get('/sign-up', (req, res) => res.render('sign-up-form'))
 app.post('/sign-up', async (req, res, next) => {
 	try {
+		const hashedPassword = await bcrypt.hash(req.body.password, 10)
 		const user = new User({
 			username: req.body.username,
-			password: req.body.password,
+			password: hashedPassword,
 		})
 		const result = await user.save()
 		res.redirect('/')
