@@ -7,8 +7,8 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const mongoDb = 'mongodb://127.0.0.1:27017/authentication_basics'
-mongoose.connect(mongoDb).then(res => {
-    console.log('db conn');
+mongoose.connect(mongoDb).then((res) => {
+	console.log('db conn')
 })
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'mongo connection error'))
@@ -26,6 +26,24 @@ app.set('views', __dirname)
 app.set('view engine', 'ejs')
 
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }))
+
+passport.use(
+	new LocalStrategy(async (username, password, done) => {
+		try {
+			const user = await User.findOne({ username: username })
+			if (!user) {
+				return done(null, false, { message: 'Incorrect username' })
+			}
+			if (user.password !== password) {
+				return done(null, false, { message: 'Incorrect password' })
+			}
+			return done(null, user)
+		} catch (err) {
+			return done(err)
+		}
+	})
+)
+
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(express.urlencoded({ extended: false }))
